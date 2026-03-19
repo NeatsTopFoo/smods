@@ -3553,3 +3553,7 @@ function SMODS.get_badge_text_colour(key)
         if k:lower()..'_seal' == key and v.text_colour then return v.text_colour end
     end
 end
+
+function SMODS.create_unlock_text(card)
+	return localize('k_'..string.lower(card and card.center and card.center.set or 'unknown'))
+end
