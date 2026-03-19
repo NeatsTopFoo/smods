@@ -3554,6 +3554,6 @@ function SMODS.get_badge_text_colour(key)
     end
 end
 
-function SMODS.create_unlock_text(card)
-	return localize('k_'..string.lower(card and card.center and card.center.set or 'unknown'))
+function SMODS.create_unlock_text(center)
+	return localize('k_'..string.lower(center and center.set or 'unknown'))
 end
