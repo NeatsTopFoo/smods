@@ -3143,11 +3143,47 @@ function ease_dollars(mod, instant)
         from_scoring = (G.STATE == G.STATES.HAND_PLAYED) or nil,
     })
 end
+
 function SMODS.add_to_pool(prototype_obj, args)
+	-- Set up table for parsing function
+	local obj_in_pool = { default_value = true }
+	
+	-- Parse in_pool function
     if type(prototype_obj.in_pool) == "function" then
-        return prototype_obj:in_pool(args)
+        local obj_ret = prototype_obj:in_pool(args)
+		
+		if type(obj_ret) == 'table' then
+			-- If it's a table, overwrite table with values
+			obj_in_pool = obj_ret
+		else
+			--[[ Otherwise pass in boolean set to the expected value.
+			This allows existing implementations to work as-is
+			without needing drastic changes on part of the author
+			to accommodate this system ]]
+			obj_in_pool.default_value = obj_ret
+		end
     end
-    return true
+	
+	-- Parse run-banned objects system
+	if
+		not obj_in_pool.block_run_ban -- Allows individual objects to prevent being banned
+		and prototype_obj.key
+		and G.GAME
+		and G.GAME.SMODS_banned_objects
+		and G.GAME.SMODS_banned_objects[prototype_obj.key]
+	then
+		-- Parse pool override func
+		if
+			G.GAME.SMODS_banned_objects[prototype_obj.key].pool_override
+			and type(G.GAME.SMODS_banned_objects[prototype_obj.key].pool_override) == 'function'
+		then
+			return G.GAME.SMODS_banned_objects[prototype_obj.key].pool_override(prototype_obj, args)
+		else
+			return false
+		end
+	end
+	
+    return obj_ret.default_value or true
 end
 
 
