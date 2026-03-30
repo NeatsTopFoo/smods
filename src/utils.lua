@@ -3670,6 +3670,7 @@ SMODS.mod_score = function(score_mod)
     delay(0.2)
 end
 
+-- Simple unlock text function, created to give mod authors an option to hook rather than patch for their use cases.
 function SMODS.create_unlock_text(center)
 	return localize('k_'..string.lower(center and center.set or 'unknown'))
 end
